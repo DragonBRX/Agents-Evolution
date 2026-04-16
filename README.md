@@ -17,7 +17,7 @@ Imagine um escritorio onde cada thread do processador (por padrao, 8 threads) re
 
 ## Novidade: Autonomia Real e Memoria Evolutiva
 
-O ecossistema agora integra capacidades de **Autonomia Real**, permitindo que as 8 mentes profissionais evoluam sozinhas a cada ciclo de geracao.
+O ecossistema agora integra capacidades de Autonomia Real, permitindo que as 8 mentes profissionais evoluam sozinhas a cada ciclo de geracao.
 
 ### Caracteristicas da Autonomia
 - **8 Mentes Profissionais Preservadas**: Designer, Analista, Inovador, Critico, Revisor, Validador, Estrategista e Memoria.
@@ -46,10 +46,10 @@ curl -O https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/setup_
 
 ### Como Executar a Geracao de Parametros
 
-Apos o setup, para iniciar o motor de autonomia:
+Apos o setup rapido, o sistema inicia a geracao automaticamente. Para rodar novamente:
 ```bash
-source venv/bin/activate
-python3 gerador_parametros.py
+cd ~/Agents-Evolution-Sandbox
+./run.sh
 ```
 
 ## Estrutura do Repositorio

@@ -107,7 +107,7 @@ class Config:
     CACHE_WEB_TTL: int = 86400  # 24 horas
     
     def __post_init__(self):
-        self.BASE_DIR = self.HOME / "sistema_agentes_inteligentes"
+        self.BASE_DIR = Path("/media/dragonscp/Novo volume/modelo BRX")
         self.DB_PATH = self.BASE_DIR / "memoria.db"
         self.SAIDA_DIR = self.BASE_DIR / "saida"
         self.LOG_DIR = self.BASE_DIR / "logs"

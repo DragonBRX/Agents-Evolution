@@ -15,37 +15,26 @@ Imagine um escritorio onde cada thread do processador (por padrao, 8 threads) re
 3.  **A Roda de Informacoes (Mesa de Conversas)**: O diferencial do sistema e o ciclo de debate. Em vez de trabalharem isolados, os agentes formam um circulo de conversa. Uma informacao ou parametro gerado por um agente e passado para o proximo na roda. Eles conversam entre si, criticam o trabalho do colega e refinam o conteudo continuamente.
 4.  **Acordo e Consenso**: O proprio codigo decide quantas vezes essa conversa deve circular na mesa ate que se chegue ao melhor acordo possivel. Cada agente traduz os parametros para sua propria perspectiva, garantindo uma cobertura completa do topico.
 
-### Sistema de Parametros Positivos e Negativos
+## Novidade: Sandbox Modular e Raciocinio Avancado (v5.2)
 
-Diferente de modelos que utilizam pontuacoes numericas fixas, o Agents-Evolution foca na polaridade e na utilidade real dos dados:
+Agora o ecossistema integra as melhores logicas de raciocinio e ferramentas inspiradas no **AgentForge**, focando 100% na qualidade e profundidade dos parametros gerados para o seu futuro modelo.
 
-| Tipo de Parametro | Descricao e Objetivo |
-| :--- | :--- |
-| **Positivos** | Sao as boas respostas, os caminhos corretos e os padroes que devem ser preferenciados pelo modelo. |
-| **Negativos** | Sao as respostas ruins, falhas ou caminhos que devem ser evitados ativamente para garantir a precisao. |
-
-Neste sistema, os parametros nao sao classificados por numeros crescentes. Nao ha necessidade de uma escala infinita de pontuacao porque o modelo e projetado para a **Evolucao por Nivel**. 
-
-### Evolucao e Superacao do Modelo
-
-O conceito central de inteligencia aqui e a superacao constante: a medida que o treinamento avanca, o proprio modelo se torna muito mais inteligente do que o conhecimento contido nos parametros que ele mesmo gerou anteriormente. 
-
-Isso faz com que os parametros "descam de nivel" — nao porque ficaram piores, mas porque o patamar de inteligencia do modelo subiu tanto que o que era considerado "avancado" anteriormente passa a ser o conhecimento basico e fundamental para o proximo nivel de evolucao.
-
-## Novidade: Sandbox Modular e Sistema de Ferramentas (v5.1)
-
-Agora o ecossistema inclui um ambiente Sandbox Modular em Python para a execucao segura e controlada de agentes. Este ambiente permite que os agentes utilizem ferramentas registradas (como busca web, processamento de arquivos e analise de dados) com total isolamento e logs detalhados.
+### Caracteristicas da Versao 5.2
+- **8 Mentes Profissionais**: Cada uma com uma especialidade distinta (Designer, Analista, Inovador, Critico, Revisor, Validador, Estrategista e Memoria).
+- **Raciocinio Multi-Perspectiva**: Cada agente analisa o topico sob sua propria otica tecnica, garantindo uma cobertura completa.
+- **Ferramentas Avancadas**: Integracao de Shell, Arquivos, Analise de Texto e Metricas de Qualidade diretamente no Sandbox.
+- **Persistencia em HD**: Otimizado para salvar parametros estruturados em JSON no seu volume de 400GB (/media/dragonscp/Novo volume/modelo BRX).
 
 ### Instalacao Rapida (Ubuntu) - Setup Completo em 1 Comando
 
-Para configurar todo o ambiente no seu Ubuntu, incluindo a criacao de diretorios no HD externo (/media/dragonscp/Novo volume/modelo BRX), instalacao de dependencias do sistema e bibliotecas Python, execute o bloco abaixo no seu terminal:
+Para configurar todo o ambiente no seu Ubuntu, incluindo a criacao de diretorios no HD externo, instalacao de dependencias do sistema e bibliotecas Python, execute o bloco abaixo no seu terminal:
 
 ```bash
-# 1. Baixe e execute o script mestre de configuracao
+# 1. Baixe e execute o script mestre de configuracao v5.2
 curl -O https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/setup_completo.sh 2>/dev/null || cat << 'EOF' > setup_completo.sh
 #!/bin/bash
 set -e
-echo "INICIANDO SETUP COMPLETO NO HD DE 400GB..."
+echo "INICIANDO SETUP COMPLETO NO HD DE 400GB (v5.2)..."
 STORAGE_ROOT="/media/dragonscp/Novo volume/modelo BRX"
 PROJECT_DIR="$HOME/Agents-Evolution-Sandbox"
 sudo mkdir -p "$STORAGE_ROOT/dados" "$STORAGE_ROOT/logs" "$STORAGE_ROOT/parametros"
@@ -55,7 +44,7 @@ mkdir -p "$PROJECT_DIR/core" && cd "$PROJECT_DIR"
 python3 -m venv venv && source venv/bin/activate
 pip install --upgrade pip && pip install requests beautifulsoup4 colorama flask matplotlib numpy pandas sqlalchemy
 cat << 'CORE' > core/sandbox.py
-import sys, json, logging, traceback, io, contextlib
+import sys, json, logging, traceback, io, contextlib, subprocess
 from typing import Dict, Any, List, Callable
 from datetime import datetime
 from pathlib import Path
@@ -65,8 +54,9 @@ class Sandbox:
         self.storage = Path(storage)
         self.tools = {}
         self.globals_env = {"__builtins__": __builtins__}
-        self.locals_env = {"print": self._print, "datetime": datetime, "json": json}
+        self.locals_env = {"print": self._print, "datetime": datetime, "json": json, "storage_path": str(self.storage)}
         self._ensure_storage()
+        self._register_default_tools()
     def _ensure_storage(self):
         self.storage.mkdir(parents=True, exist_ok=True)
         print(f"DEBUG: Armazenamento em {self.storage}")
@@ -75,6 +65,28 @@ class Sandbox:
     def register_tool(self, name, func):
         self.tools[name] = func
         self.locals_env[name] = func
+    def _register_default_tools(self):
+        def execute_shell(command):
+            try:
+                result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=30)
+                return {"stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
+            except Exception as e: return {"error": str(e)}
+        def read_file(path):
+            full_path = self.storage / path
+            if not full_path.exists(): return f"Erro: Arquivo {path} nao encontrado."
+            return full_path.read_text(encoding='utf-8')
+        def write_file(path, content):
+            full_path = self.storage / path
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+            full_path.write_text(content, encoding='utf-8')
+            return f"Sucesso: {path} salvo."
+        def analyze_text(text):
+            words = text.split()
+            return {"word_count": len(words), "char_count": len(text), "unique_words": len(set(w.lower() for w in words)), "complexity": len(set(words)) / max(1, len(words))}
+        self.register_tool("shell", execute_shell)
+        self.register_tool("ler_arquivo", read_file)
+        self.register_tool("escrever_arquivo", write_file)
+        self.register_tool("analisar_texto", analyze_text)
     def run(self, code):
         try:
             exec(code, self.globals_env, self.locals_env)
@@ -84,16 +96,17 @@ class Sandbox:
 CORE
 cat << 'GEN' > gerador_brx.py
 from core.sandbox import Sandbox
-import time
+import time, json
 def main():
     sb = Sandbox("Gerador_BRX")
-    def salvar_parametro(tipo, conteudo):
-        path = "/media/dragonscp/Novo volume/modelo BRX/parametros/params.txt"
-        with open(path, "a") as f:
-            f.write(f"[{time.ctime()}] {tipo}: {conteudo}\n")
-        return "Salvo no HD"
-    sb.register_tool("salvar", salvar_parametro)
-    codigo = "print('Iniciando Evolucao de Parametros BRX...'); status = salvar('POSITIVO', 'Nova logica detectada.'); print(f'Status do HD: {status}')"
+    def salvar_conhecimento(tipo, topico, conteudo):
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        data = {"timestamp": timestamp, "tipo": tipo, "topico": topico, "conteudo": conteudo}
+        filename = f"parametros/{topico}_{int(time.time())}.json"
+        sb.locals_env["escrever_arquivo"](filename, json.dumps(data, indent=4, ensure_ascii=False))
+        return f"Parametro {tipo} salvo em {filename}"
+    sb.register_tool("salvar_conhecimento", salvar_conhecimento)
+    codigo = "print('Iniciando Evolucao de Parametros BRX...'); status = salvar_conhecimento('POSITIVO', 'Arquitetura_IA', 'Nova logica detectada.'); print(f'Status do HD: {status}')"
     sb.run(codigo)
 if __name__ == "__main__": main()
 GEN
@@ -104,12 +117,6 @@ EOF
 chmod +x setup_completo.sh
 ./setup_completo.sh
 ```
-
-### Caracteristicas do Sandbox
-- **Ambiente Isolado**: Execucao segura de codigo Python via exec().
-- **Sistema de Ferramentas**: Registro dinamico de funcoes (Tools) para os agentes.
-- **Persistencia em HD**: Configurado nativamente para salvar parametros e logs no seu volume de 400GB.
-- **Logs Profissionais**: Monitoramento em tempo real do que o agente esta fazendo.
 
 ## Estrutura do Repositorio
 

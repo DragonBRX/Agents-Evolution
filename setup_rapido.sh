@@ -11,10 +11,12 @@ set -e
 echo "INICIANDO SETUP RAPIDO..."
 
 # 1. Configuracao do HD (Cria apenas o que falta)
+# Tratamento rigoroso para caminhos com espacos
 STORAGE_ROOT="/media/dragonscp/Novo volume/modelo BRX"
 PROJECT_DIR="$HOME/Agents-Evolution-Sandbox"
 
 echo "Verificando HD: $STORAGE_ROOT"
+# Usando aspas duplas em todas as referencias ao STORAGE_ROOT
 mkdir -p "$STORAGE_ROOT/dados" "$STORAGE_ROOT/logs" "$STORAGE_ROOT/parametros" "$STORAGE_ROOT/memorias" "$STORAGE_ROOT/licoes_aprendidas"
 
 # 2. Ambiente Python (Sem apt update pesado)
@@ -42,6 +44,8 @@ curl -s -o gerador_parametros.py https://raw.githubusercontent.com/DragonBRX/Age
 echo "Criando script de execucao direta..."
 cat << 'EOF' > run.sh
 #!/bin/bash
+# Garante que o script rode no diretorio correto
+cd "$(dirname "$0")"
 source venv/bin/activate
 python3 gerador_parametros.py
 EOF

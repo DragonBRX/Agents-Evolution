@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
     SANDBOX MODULAR PARA AGENTES INTELIGENTES - SISTEMA DE AUTONOMIA REAL
-    Ambiente isolado, robusto e expansível com suporte a 8 mentes profissionais.
-    Integra ferramentas de Memória Evolutiva, Auto-Reflexão e Aprendizado Recurvado.
+    Ambiente isolado, robusto e expansivel com suporte a 8 mentes profissionais.
+    Integra ferramentas de Memoria Evolutiva, Auto-Reflexao e Aprendizado Recurvado.
     Otimizado para HD de 400GB em /media/dragonscp/Novo volume/modelo BRX.
 """
 
@@ -25,7 +25,7 @@ from datetime import datetime
 from pathlib import Path
 
 # ====================================================================================
-# SEÇÃO 1: CONFIGURAÇÃO DE LOGGING PROFISSIONAL E TELEMETRIA
+# SECAO 1: CONFIGURACAO DE LOGGING PROFISSIONAL E TELEMETRIA
 # ====================================================================================
 
 class SandboxLogger:
@@ -41,14 +41,14 @@ class SandboxLogger:
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         
-        # Handler para Console (Saída Padrão)
+        # Handler para Console (Saida Padrao)
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
         
         if not self.logger.handlers:
             self.logger.addHandler(console_handler)
             
-            # Handler para Arquivo (Persistência no HD de 400GB)
+            # Handler para Arquivo (Persistencia no HD de 400GB)
             if log_file:
                 try:
                     log_file.parent.mkdir(parents=True, exist_ok=True)
@@ -64,7 +64,7 @@ class SandboxLogger:
     def debug(self, msg: str): self.logger.debug(msg)
 
 # ====================================================================================
-# SEÇÃO 2: SISTEMA DE FERRAMENTAS (TOOL SYSTEM) COM AUTONOMIA
+# SECAO 2: SISTEMA DE FERRAMENTAS (TOOL SYSTEM) COM AUTONOMIA
 # ====================================================================================
 
 class Tool:
@@ -89,7 +89,7 @@ class Tool:
             result = self.func(*args, **kwargs)
             duration = time.time() - start_time
             
-            # Registra sucesso no histórico (limite de 50 registros para economia de memória)
+            # Registra sucesso no historico (limite de 50 registros para economia de memoria)
             if len(self.execution_history) > 50: self.execution_history.pop(0)
             self.execution_history.append({
                 "timestamp": self.last_used.isoformat(),
@@ -127,55 +127,60 @@ class Tool:
         }
 
 # ====================================================================================
-# SEÇÃO 3: CLASSE PRINCIPAL SANDBOX - EXPANSÃO CUMULATIVA
+# SECAO 3: CLASSE PRINCIPAL SANDBOX - EXPANSAO CUMULATIVA
 # ====================================================================================
 
 class Sandbox:
     """
-    Ambiente de execução seguro, robusto e AUTÔNOMO para agentes BRX.
-    Combina a lógica original de 8 mentes com ferramentas de Evolução e Aprendizado.
+    Ambiente de execucao seguro, robusto e AUTONOMO para agentes BRX.
+    Combina a logica original de 8 mentes com ferramentas de Evolucao e Aprendizado.
     """
     
     def __init__(self, name: str = "BRX_Autonomous_Sandbox", storage_path: str = "/media/dragonscp/Novo volume/modelo BRX"):
         self.name = name
-        self.storage_root = Path(storage_path)
+        # Protecao para caminhos com espacos usando Path do pathlib
+        self.storage_root = Path(storage_path).absolute()
         self.tools: Dict[str, Tool] = {}
         
-        # Inicializa diretórios e logs (Garantindo persistência no HD de 400GB)
+        # Inicializa diretorios e logs (Garantindo persistencia no HD de 400GB)
         self._ensure_directories()
         log_path = self.storage_root / "logs" / f"sandbox_autonomia_{int(time.time())}.log"
         self.logger = SandboxLogger(name, log_file=log_path)
         
-        # Ambiente de execução isolado (Dicionários para exec())
+        # Ambiente de execucao isolado (Dicionarios para exec())
         self.globals_env = {"__builtins__": __builtins__}
         self.locals_env = {}
         
-        # Inicialização do sistema
+        # Inicializacao do sistema
         self._setup_base_env()
         self._register_core_tools()
         self._register_autonomy_tools()
         
-        self.logger.info(f"Sandbox Autônomo '{name}' inicializado com sucesso.")
+        self.logger.info(f"Sandbox Autonomo '{name}' inicializado com sucesso.")
         self.logger.info(f"Ponto de montagem de dados: {self.storage_root}")
 
     def _ensure_directories(self):
-        """Cria a estrutura de pastas necessária para o aprendizado recurvado no HD."""
+        """Cria a estrutura de pastas necessaria para o aprendizado recurvado no HD."""
         subdirs = [
             "dados", "logs", "parametros", "memorias", "exports", 
             "conhecimento_base", "licoes_aprendidas", "evolucao_logica"
         ]
         try:
+            # Verifica se o caminho base existe ou pode ser criado
+            if not self.storage_root.exists():
+                self.storage_root.mkdir(parents=True, exist_ok=True)
+            
             for sd in subdirs:
                 (self.storage_root / sd).mkdir(parents=True, exist_ok=True)
         except Exception as e:
-            # Fallback para diretório local se o HD não estiver disponível (Proteção de execução)
-            print(f"AVISO: Falha ao acessar HD de 400GB ({e}). Usando diretório local temporário.")
-            self.storage_root = Path("./brx_local_storage")
+            # Fallback para diretorio local se o HD nao estiver disponivel (Protecao de execucao)
+            print(f"AVISO: Falha ao acessar HD ({e}). Usando diretorio local temporario.")
+            self.storage_root = Path("./brx_local_storage").absolute()
             for sd in subdirs:
                 (self.storage_root / sd).mkdir(parents=True, exist_ok=True)
 
     def _setup_base_env(self):
-        """Configura as variáveis, bibliotecas e funções básicas do ambiente Python isolado."""
+        """Configura as variaveis, bibliotecas e funcoes basicas do ambiente Python isolado."""
         self.locals_env.update({
             "print": self._agent_print,
             "datetime": datetime,
@@ -198,14 +203,14 @@ class Sandbox:
     # --- Registro de Ferramentas de Autonomia ---
 
     def register_tool(self, name: str, func: Callable, description: str, category: str = "custom"):
-        """Adiciona uma nova ferramenta ao arsenal do agente de forma dinâmica."""
+        """Adiciona uma nova ferramenta ao arsenal do agente de forma dinamica."""
         tool = Tool(name, func, description, category)
         self.tools[name] = tool
         self.locals_env[name] = tool.execute
         self.logger.info(f"Ferramenta registrada: '{name}' [{category}]")
 
     def _register_core_tools(self):
-        """Registra o conjunto de ferramentas essenciais de manipulação de dados."""
+        """Registra o conjunto de ferramentas essenciais de manipulacao de dados."""
         
         def write_brx_data(filename: str, content: Union[str, Dict], subdir: str = "dados"):
             path = self.storage_root / subdir / filename
@@ -217,7 +222,7 @@ class Sandbox:
 
         def read_brx_data(filename: str, subdir: str = "dados"):
             path = self.storage_root / subdir / filename
-            if not path.exists(): return {"error": f"Arquivo {filename} não encontrado em {subdir}"}
+            if not path.exists(): return {"error": f"Arquivo {filename} nao encontrado em {subdir}"}
             return path.read_text(encoding='utf-8')
 
         def run_shell_cmd(cmd: str):
@@ -233,15 +238,15 @@ class Sandbox:
                 return {"error": str(e)}
 
         self.register_tool("escrever_arquivo", write_brx_data, "Persiste dados ou JSON no HD de 400GB.", "arquivos")
-        self.register_tool("ler_arquivo", read_brx_data, "Lê arquivos do armazenamento BRX.", "arquivos")
+        self.register_tool("ler_arquivo", read_brx_data, "Le arquivos do armazenamento BRX.", "arquivos")
         self.register_tool("executar_shell", run_shell_cmd, "Executa comandos no terminal Ubuntu Headless.", "sistema")
 
     def _register_autonomy_tools(self):
-        """Registra ferramentas que permitem aos agentes evoluírem sozinhos (Aprendizado Recurvado)."""
+        """Registra ferramentas que permitem aos agentes evoluirem sozinhos (Aprendizado Recurvado)."""
         
-        # 1. Memória Evolutiva: Capacidade de buscar o que já foi aprendido
+        # 1. Memoria Evolutiva: Capacidade de buscar o que ja foi aprendido
         def buscar_conhecimento_antigo(pattern: str = "*.json", subdir: str = "parametros"):
-            """Busca parâmetros gerados anteriormente para análise e evolução."""
+            """Busca parametros gerados anteriormente para analise e evolucao."""
             search_path = str(self.storage_root / subdir / pattern)
             files = glob.glob(search_path)
             results = []
@@ -251,9 +256,9 @@ class Sandbox:
                 except: continue
             return results
 
-        # 2. Auto-Reflexão: Ferramenta para o agente avaliar sua própria lógica
+        # 2. Auto-Reflexao: Ferramenta para o agente avaliar sua propria logica
         def auto_refletir(pensamento: str, criterio: str = "qualidade"):
-            """Permite ao agente avaliar o próprio raciocínio antes de finalizar o parâmetro."""
+            """Permite ao agente avaliar o proprio raciocinio antes de finalizar o parametro."""
             words = pensamento.split()
             score = len(set(words)) / max(1, len(words)) # Diversidade lexical
             return {
@@ -263,9 +268,9 @@ class Sandbox:
                 "timestamp": datetime.now().isoformat()
             }
 
-        # 3. Registro de Lições: Persistência de aprendizado real
+        # 3. Registro de Licoes: Persistencia de aprendizado real
         def registrar_licao(licao: str, contexto: str):
-            """Salva uma lição aprendida pelo agente para uso em ciclos futuros."""
+            """Salva uma licao aprendida pelo agente para uso em ciclos futuros."""
             filename = f"licao_{int(time.time())}_{random.randint(100, 999)}.json"
             data = {
                 "contexto": contexto,
@@ -275,14 +280,14 @@ class Sandbox:
             return write_brx_data(filename, data, subdir="licoes_aprendidas")
 
         self.register_tool("buscar_conhecimento", buscar_conhecimento_antigo, "Busca aprendizados passados no HD.", "autonomia")
-        self.register_tool("auto_refletir", auto_refletir, "Avalia a qualidade do próprio raciocínio.", "autonomia")
-        self.register_tool("registrar_licao", registrar_licao, "Persiste lições aprendidas para evolução futura.", "autonomia")
+        self.register_tool("auto_refletir", auto_refletir, "Avalia a qualidade do proprio raciocinio.", "autonomia")
+        self.register_tool("registrar_licao", registrar_licao, "Persiste licoes aprendidas para evolucao futura.", "autonomia")
 
-    # --- Execução de Código ---
+    # --- Execucao de Codigo ---
 
     def execute(self, code: str, context_name: str = "main_evolution") -> Dict[str, Any]:
-        """Executa um bloco de código Python de forma isolada, capturando toda a saída e erros."""
-        self.logger.info(f"Iniciando Ciclo de Evolução: {context_name}")
+        """Executa um bloco de codigo Python de forma isolada, capturando toda a saida e erros."""
+        self.logger.info(f"Iniciando Ciclo de Evolucao: {context_name}")
         
         stdout_capture = io.StringIO()
         stderr_capture = io.StringIO()
@@ -299,7 +304,7 @@ class Sandbox:
 
         try:
             with contextlib.redirect_stdout(stdout_capture), contextlib.redirect_stderr(stderr_capture):
-                # Execução com isolamento de escopo
+                # Execucao com isolamento de escopo
                 exec(code, self.globals_env, self.locals_env)
             
             result["success"] = True
@@ -319,7 +324,7 @@ class Sandbox:
         return result
 
     def get_system_report(self) -> Dict[str, Any]:
-        """Gera um relatório completo da saúde e aprendizado do sistema Sandbox."""
+        """Gera um relatorio completo da saude e aprendizado do sistema Sandbox."""
         return {
             "sandbox_name": self.name,
             "storage_status": "ONLINE" if self.storage_root.exists() else "OFFLINE",
@@ -328,4 +333,3 @@ class Sandbox:
             "total_mind_threads": 8,
             "active_tools": [name for name, t in self.tools.items() if t.usage_count > 0]
         }
-EOF

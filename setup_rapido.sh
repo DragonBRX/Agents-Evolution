@@ -11,17 +11,15 @@ set -e
 echo "INICIANDO SETUP RAPIDO..."
 
 # 1. Configuracao do HD (Cria apenas o que falta)
-# Tratamento rigoroso para caminhos com espacos
 STORAGE_ROOT="/media/dragonscp/Novo volume/modelo BRX"
 PROJECT_DIR="$HOME/Agents-Evolution-Sandbox"
 
 echo "Verificando HD: $STORAGE_ROOT"
-# Usando aspas duplas em todas as referencias ao STORAGE_ROOT
 mkdir -p "$STORAGE_ROOT/dados" "$STORAGE_ROOT/logs" "$STORAGE_ROOT/parametros" "$STORAGE_ROOT/memorias" "$STORAGE_ROOT/licoes_aprendidas"
 
 # 2. Ambiente Python (Sem apt update pesado)
 echo "Configurando ambiente virtual..."
-mkdir -p "$PROJECT_DIR/core"
+mkdir -p "$PROJECT_DIR/sandbox_sistema/core"
 cd "$PROJECT_DIR"
 
 if [ ! -d "venv" ]; then
@@ -35,9 +33,11 @@ source venv/bin/activate
 echo "Instalando bibliotecas essenciais..."
 pip install --no-cache-dir requests beautifulsoup4 colorama sqlalchemy pandas numpy flask
 
-# 4. Download dos arquivos do GitHub (Garantindo que voce tenha a versao mais nova)
-echo "Baixando scripts de autonomia..."
-curl -s -o core/sandbox.py https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/sandbox_sistema/core/sandbox.py
+# 4. Download dos arquivos do GitHub (Garantindo a estrutura de pacotes correta)
+echo "Baixando scripts de autonomia e pacotes..."
+curl -s -o sandbox_sistema/__init__.py https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/sandbox_sistema/__init__.py
+curl -s -o sandbox_sistema/core/__init__.py https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/sandbox_sistema/core/__init__.py
+curl -s -o sandbox_sistema/core/sandbox.py https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/sandbox_sistema/core/sandbox.py
 curl -s -o gerador_parametros.py https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/gerador_parametros.py
 
 # 5. Criacao de um script de execucao direta (run.sh)
@@ -47,6 +47,8 @@ cat << 'EOF' > run.sh
 # Garante que o script rode no diretorio correto
 cd "$(dirname "$0")"
 source venv/bin/activate
+# Adiciona o diretorio atual ao PYTHONPATH para garantir que os pacotes sejam encontrados
+export PYTHONPATH=$PYTHONPATH:$(pwd)
 python3 gerador_parametros.py
 EOF
 chmod +x run.sh

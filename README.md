@@ -26,12 +26,21 @@ O ecossistema agora integra capacidades de **Autonomia Real**, permitindo que as
 - **Aprendizado Recurvado**: O sistema registra "licoes aprendidas" que sao consultadas em ciclos futuros de debate.
 - **Persistencia Nativa em HD**: Totalmente configurado para o seu volume de 400GB (/media/dragonscp/Novo volume/modelo BRX).
 
-### Instalacao Rapida (Ubuntu) - Setup Completo em 1 Comando
+### Instalacao Ultra-Rapida (Ubuntu) - Focada em Performance
 
-Para configurar todo o ambiente no seu Ubuntu, incluindo a criacao de diretorios no HD externo, instalacao de dependencias do sistema e bibliotecas Python, execute o bloco abaixo no seu terminal:
+Se o seu sistema ja tem o Python instalado, este comando e muito mais rapido e pula as atualizacoes pesadas do Ubuntu:
 
 ```bash
-# 1. Baixe e execute o script mestre de configuracao
+# 1. Baixe e execute o setup ultra-rapido (Pula apt update)
+curl -O https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/setup_rapido.sh && chmod +x setup_rapido.sh && ./setup_rapido.sh
+```
+
+### Setup Completo (Para Sistemas Novos)
+
+Para uma instalacao que inclui todas as dependencias do sistema operacional (pode ser mais lenta):
+
+```bash
+# 1. Baixe e execute o script mestre de configuracao completa
 curl -O https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/setup_completo.sh && chmod +x setup_completo.sh && ./setup_completo.sh
 ```
 

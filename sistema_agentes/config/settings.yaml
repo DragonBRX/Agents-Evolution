@@ -1,0 +1,299 @@
+# =============================================================================
+# CONFIGURAÇÃO PRINCIPAL DO SISTEMA MULTI-AGENTE
+# Sistema Inteligente de 8 Agentes Autônomos v5.0
+# =============================================================================
+
+sistema:
+  nome: "Sistema Multi-Agente Inteligente"
+  versao: "5.0.0"
+  ambiente: "producao"  # desenvolvimento, teste, producao
+  
+  # Configurações de execução
+  execucao:
+    max_workers: 8
+    timeout_debate: 300  # segundos
+    num_rodadas_padrao: 15
+    paralelismo_topico: 4
+    
+  # Configurações de logging
+  logging:
+    nivel: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    formato: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+    arquivo: "logs/sistema_agentes.log"
+    max_bytes: 10485760  # 10MB
+    backup_count: 5
+    console: true
+
+# =============================================================================
+# CONFIGURAÇÃO DOS AGENTES
+# =============================================================================
+
+agentes:
+  quantidade: 8
+  
+  # Personalidade base para todos os agentes
+  personalidade_base:
+    criatividade: 0.7
+    rigor: 0.8
+    colaboracao: 0.9
+    aprendizado: 0.85
+    
+  # Configuração individual de cada agente
+  lista:
+    - id: 1
+      nome: "Designer"
+      especialidade: "Estrutura e padrões visuais"
+      personalidade:
+        criatividade: 0.9
+        rigor: 0.6
+        foco: "padroes_estruturais"
+      peso_voto: 1.0
+      
+    - id: 2
+      nome: "Analista"
+      especialidade: "Métricas e análise de dados"
+      personalidade:
+        criatividade: 0.4
+        rigor: 0.95
+        foco: "dados_metricas"
+      peso_voto: 1.2
+      
+    - id: 3
+      nome: "Criador"
+      especialidade: "Geração de ideias novas"
+      personalidade:
+        criatividade: 0.95
+        rigor: 0.5
+        foco: "inovacao"
+      peso_voto: 1.0
+      
+    - id: 4
+      nome: "Critico"
+      especialidade: "Identificação de falhas"
+      personalidade:
+        criatividade: 0.5
+        rigor: 0.95
+        foco: "deteccao_erros"
+      peso_voto: 1.3
+      
+    - id: 5
+      nome: "Revisor"
+      especialidade: "Refinamento textual"
+      personalidade:
+        criatividade: 0.6
+        rigor: 0.9
+        foco: "qualidade_texto"
+      peso_voto: 1.1
+      
+    - id: 6
+      nome: "Validador"
+      especialidade: "Verificação de coerência"
+      personalidade:
+        criatividade: 0.4
+        rigor: 0.95
+        foco: "consistencia"
+      peso_voto: 1.2
+      
+    - id: 7
+      nome: "Estrategista"
+      especialidade: "Planejamento e estratégia"
+      personalidade:
+        criatividade: 0.8
+        rigor: 0.8
+        foco: "planejamento"
+      peso_voto: 1.1
+      
+    - id: 8
+      nome: "Memoria"
+      especialidade: "Armazenamento de padrões"
+      personalidade:
+        criatividade: 0.5
+        rigor: 0.9
+        foco: "aprendizado_historico"
+      peso_voto: 1.0
+
+# =============================================================================
+# CONFIGURAÇÃO DO DEBATE
+# =============================================================================
+
+debate:
+  # Número de rodadas de debate
+  rodadas:
+    min: 5
+    padrao: 15
+    max: 50
+    
+  # Critérios de parada antecipada
+  parada_antecipada:
+    enabled: true
+    score_convergencia: 0.85  # Para se score médio > 0.85
+    rodadas_sem_melhoria: 3   # Para se 3 rodadas sem melhoria
+    
+  # Configuração de críticas
+  criticas:
+    max_por_rodada: 100
+    peso_critica_positiva: 0.5
+    peso_critica_negativa: 1.0
+    
+  # Consenso
+  consenso:
+    metodo: "media_ponderada"  # media_simples, media_ponderada, voto_majoritario
+    threshold_aprovacao: 0.6
+
+# =============================================================================
+# CONFIGURAÇÃO DO BANCO DE DADOS
+# =============================================================================
+
+banco_dados:
+  # SQLite (desenvolvimento/teste)
+  sqlite:
+    enabled: true
+    path: "data/flash_sistema.db"
+    
+  # PostgreSQL (produção)
+  postgresql:
+    enabled: false
+    host: "localhost"
+    port: 5432
+    database: "sistema_agentes"
+    user: "agente"
+    password: "${DB_PASSWORD}"
+    pool_size: 10
+    max_overflow: 20
+    
+  # Configurações gerais
+  config:
+    echo_sql: false  # Log queries SQL
+    criar_tabelas: true
+    migracoes_auto: true
+
+# =============================================================================
+# CONFIGURAÇÃO DE MEMÓRIA E CACHE
+# =============================================================================
+
+memoria:
+  # Memória de curto prazo (sessão)
+  curto_prazo:
+    max_itens: 1000
+    ttl: 3600  # segundos
+    
+  # Memória de longo prazo (BD)
+  longo_prazo:
+    max_parametros_por_topico: 10000
+    compactacao_auto: true
+    
+  # Cache com Redis (opcional)
+  redis:
+    enabled: false
+    host: "localhost"
+    port: 6379
+    db: 0
+    ttl: 7200
+
+# =============================================================================
+# CONFIGURAÇÃO DE BUSCA WEB
+# =============================================================================
+
+web_search:
+  enabled: true
+  motor: "duckduckgo"  # duckduckgo, google, bing
+  
+  # Limites de uso
+  limites:
+    max_resultados: 10
+    timeout: 30
+    tentativas: 3
+    
+  # Cache de buscas
+  cache:
+    enabled: true
+    ttl: 86400  # 24 horas
+    
+  # Rate limiting
+  rate_limit:
+    requests_por_minuto: 30
+    delay_entre_requests: 2  # segundos
+
+# =============================================================================
+# CONFIGURAÇÃO DE CLASSIFICAÇÃO
+# =============================================================================
+
+classificacao:
+  # Thresholds para classificação de parâmetros
+  thresholds:
+    positivo: 0.7
+    negativo: 0.4
+    incerto_min: 0.4
+    incerto_max: 0.7
+    
+  # Pesos para cálculo de score
+  pesos:
+    qualidade_conteudo: 0.3
+    coerencia: 0.25
+    inovacao: 0.2
+    aplicabilidade: 0.25
+    
+  # Feedback loop
+  feedback:
+    enabled: true
+    ajuste_score: 0.05
+
+# =============================================================================
+# TÓPICOS PADRÃO
+# =============================================================================
+
+topicos:
+  padrao:
+    - "python_avancado"
+    - "docker_kubernetes"
+    - "aws_cloud"
+    - "machine_learning"
+    - "sql_otimizado"
+    - "blockchain_cripto"
+    - "cybersecurity_defesa"
+    - "api_rest_graphql"
+    - "arquitetura_software"
+    - "performance_tuning"
+    - "devops_ci_cd"
+    - "microservicos"
+    - "data_engineering"
+    - "frontend_moderno"
+    - "mobile_development"
+
+# =============================================================================
+# CONFIGURAÇÃO DA API REST
+# =============================================================================
+
+api:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8000
+  
+  # CORS
+  cors:
+    enabled: true
+    origins: ["*"]
+    
+  # Autenticação
+  auth:
+    enabled: false
+    tipo: "jwt"  # jwt, api_key
+    secret: "${JWT_SECRET}"
+    
+  # Rate limiting
+  rate_limit:
+    enabled: true
+    requests_por_minuto: 100
+
+# =============================================================================
+# CONFIGURAÇÃO DE EXPORTAÇÃO
+# =============================================================================
+
+exportacao:
+  formatos: ["json", "yaml", "csv"]
+  diretorio: "output"
+  
+  # Compressão
+  compressao:
+    enabled: true
+    formato: "gzip"  # gzip, zip

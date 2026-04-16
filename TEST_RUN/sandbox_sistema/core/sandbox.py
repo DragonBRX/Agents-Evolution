@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-    SANDBOX MODULAR PARA AGENTES INTELIGENTES - MOTOR DE PRODUCAO REAL (v5.5)
-    Ambiente isolado com isolamento de processo, ferramentas REAIS de pesquisa web e autonomia profunda.
-    Otimizado para HD de 400GB em /media/dragonscp/Novo volume/modelo BRX.
-    Estilo Profissional: Sem emojis e com logs tecnicos detalhados.
+    SANDBOX MODULAR PARA AGENTES INTELIGENTES - SISTEMA DE AUTONOMIA REAL
+    Ambiente isolado, robusto e expansivel com suporte a 8 mentes profissionais.
+    Integra ferramentas de Memoria Evolutiva, Auto-Reflexao e Aprendizado Recurvado.
+    Otimizado para HD de 400GB em /home/ubuntu/Agents-Evolution/TEST_RUN/STORAGE.
 """
 
 import sys
@@ -20,33 +20,24 @@ import hashlib
 import random
 import threading
 import glob
-import os
 from typing import Dict, Any, List, Callable, Optional, Union, Tuple
 from datetime import datetime
 from pathlib import Path
 
-# Tentativa de importar bibliotecas de pesquisa real
-try:
-    import requests
-    from bs4 import BeautifulSoup
-    WEB_TOOLS_AVAILABLE = True
-except ImportError:
-    WEB_TOOLS_AVAILABLE = False
-
 # ====================================================================================
-# SECAO 1: CONFIGURACAO DE LOGGING PROFISSIONAL
+# SECAO 1: CONFIGURACAO DE LOGGING PROFISSIONAL E TELEMETRIA
 # ====================================================================================
 
 class SandboxLogger:
-    """Gerenciador de logs para o ambiente sandbox com suporte a arquivos no HD."""
+    """Gerenciador de logs para o ambiente sandbox com suporte a cores e arquivos."""
     
     def __init__(self, name: str = "Sandbox", log_file: Optional[Path] = None):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.INFO)
         
-        # Formato tecnico detalhado para auditoria de autonomia
+        # Formato detalhado para auditoria de autonomia
         formatter = logging.Formatter(
-            '%(asctime)s | %(levelname)-8s | [%(name)s] %(message)s', 
+            '%(asctime)s | %(levelname)-8s | [%(name)s] [%(threadName)s] %(message)s', 
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         
@@ -70,9 +61,10 @@ class SandboxLogger:
     def info(self, msg: str): self.logger.info(msg)
     def error(self, msg: str): self.logger.error(msg)
     def warning(self, msg: str): self.logger.warning(msg)
+    def debug(self, msg: str): self.logger.debug(msg)
 
 # ====================================================================================
-# SECAO 2: SISTEMA DE FERRAMENTAS REAIS (TOOL SYSTEM)
+# SECAO 2: SISTEMA DE FERRAMENTAS (TOOL SYSTEM) COM AUTONOMIA
 # ====================================================================================
 
 class Tool:
@@ -84,30 +76,67 @@ class Tool:
         self.description = description
         self.category = category
         self.usage_count = 0
+        self.last_used: Optional[datetime] = None
+        self.execution_history: List[Dict[str, Any]] = []
 
     def execute(self, *args, **kwargs) -> Any:
-        """Executa a ferramenta com tratamento de erros e telemetria."""
+        """Executa a ferramenta com telemetria, tratamento de erros e logs de autonomia."""
         self.usage_count += 1
+        self.last_used = datetime.now()
+        start_time = time.time()
+        
         try:
-            return self.func(*args, **kwargs)
+            result = self.func(*args, **kwargs)
+            duration = time.time() - start_time
+            
+            # Registra sucesso no historico (limite de 50 registros para economia de memoria)
+            if len(self.execution_history) > 50: self.execution_history.pop(0)
+            self.execution_history.append({
+                "timestamp": self.last_used.isoformat(),
+                "duration": duration,
+                "success": True
+            })
+            
+            return result
         except Exception as e:
+            duration = time.time() - start_time
+            error_trace = traceback.format_exc()
+            
+            self.execution_history.append({
+                "timestamp": self.last_used.isoformat(),
+                "duration": duration,
+                "success": False,
+                "error": str(e)
+            })
+            
             return {
                 "success": False,
                 "error": str(e),
+                "traceback": error_trace,
                 "tool": self.name
             }
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "description": self.description,
+            "category": self.category,
+            "usage_count": self.usage_count,
+            "last_used": self.last_used.isoformat() if self.last_used else None,
+            "avg_duration": sum(h['duration'] for h in self.execution_history) / max(1, len(self.execution_history))
+        }
+
 # ====================================================================================
-# SECAO 3: CLASSE PRINCIPAL SANDBOX - EXPANSAO REAL E ISOLAMENTO
+# SECAO 3: CLASSE PRINCIPAL SANDBOX - EXPANSAO CUMULATIVA
 # ====================================================================================
 
 class Sandbox:
     """
     Ambiente de execucao seguro, robusto e AUTONOMO para agentes BRX.
-    Combina a logica original de 8 mentes com ferramentas de Producao Real.
+    Combina a logica original de 8 mentes com ferramentas de Evolucao e Aprendizado.
     """
     
-    def __init__(self, name: str = "BRX_Real_Engine", storage_path: str = "/media/dragonscp/Novo volume/modelo BRX"):
+    def __init__(self, name: str = "BRX_Autonomous_Sandbox", storage_path: str = "/home/ubuntu/Agents-Evolution/TEST_RUN/STORAGE"):
         self.name = name
         # Protecao para caminhos com espacos usando Path do pathlib
         self.storage_root = Path(storage_path).absolute()
@@ -115,7 +144,7 @@ class Sandbox:
         
         # Inicializa diretorios e logs (Garantindo persistencia no HD de 400GB)
         self._ensure_directories()
-        log_path = self.storage_root / "logs" / f"engine_producao_{int(time.time())}.log"
+        log_path = self.storage_root / "logs" / f"sandbox_autonomia_{int(time.time())}.log"
         self.logger = SandboxLogger(name, log_file=log_path)
         
         # Ambiente de execucao isolado (Dicionarios para exec())
@@ -125,10 +154,9 @@ class Sandbox:
         # Inicializacao do sistema
         self._setup_base_env()
         self._register_core_tools()
-        self._register_web_tools()
         self._register_autonomy_tools()
         
-        self.logger.info(f"Motor Real '{name}' inicializado com sucesso.")
+        self.logger.info(f"Sandbox Autonomo '{name}' inicializado com sucesso.")
         self.logger.info(f"Ponto de montagem de dados: {self.storage_root}")
 
     def _ensure_directories(self):
@@ -145,7 +173,7 @@ class Sandbox:
             for sd in subdirs:
                 (self.storage_root / sd).mkdir(parents=True, exist_ok=True)
         except Exception as e:
-            # Fallback para diretorio local se o HD nao estiver disponivel
+            # Fallback para diretorio local se o HD nao estiver disponivel (Protecao de execucao)
             print(f"AVISO: Falha ao acessar HD ({e}). Usando diretorio local temporario.")
             self.storage_root = Path("./brx_local_storage").absolute()
             for sd in subdirs:
@@ -163,16 +191,16 @@ class Sandbox:
             "Path": Path,
             "glob": glob.glob,
             "STORAGE_PATH": str(self.storage_root),
-            "AUTONOMY_LEVEL": "PRODUCTION",
+            "AUTONOMY_LEVEL": "HIGH",
             "MIND_COUNT": 8
         })
 
     def _agent_print(self, *args, **kwargs):
         """Print customizado que redireciona para o logger do sistema com timestamp."""
         msg = " ".join(map(str, args))
-        self.logger.info(f"[BRX_MIND] {msg}")
+        self.logger.info(f"[AUTONOMY_MIND] {msg}")
 
-    # --- Registro de Ferramentas de Producao ---
+    # --- Registro de Ferramentas de Autonomia ---
 
     def register_tool(self, name: str, func: Callable, description: str, category: str = "custom"):
         """Adiciona uma nova ferramenta ao arsenal do agente de forma dinamica."""
@@ -213,69 +241,26 @@ class Sandbox:
         self.register_tool("ler_arquivo", read_brx_data, "Le arquivos do armazenamento BRX.", "arquivos")
         self.register_tool("executar_shell", run_shell_cmd, "Executa comandos no terminal Ubuntu Headless.", "sistema")
 
-    def _register_web_tools(self):
-        """Registra ferramentas de pesquisa web REAIS (DuckDuckGo + BS4)."""
-        
-        def web_search_real(query: str, max_results: int = 5):
-            """Realiza pesquisa real na internet consumindo tempo de rede e processamento."""
-            self.logger.info(f"Iniciando Pesquisa Web Real por: '{query}'")
-            
-            if not WEB_TOOLS_AVAILABLE:
-                self.logger.warning("Bibliotecas web (requests/bs4) nao encontradas. Simulando delay de rede...")
-                time.sleep(3)
-                return {"error": "Bibliotecas web nao instaladas no ambiente."}
-            
-            try:
-                # Simula o delay real de conexao para garantir que o agente 'espere' pela informacao
-                time.sleep(random.uniform(2.0, 5.0))
-                
-                url = f"https://html.duckduckgo.com/html/?q={query}"
-                headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                }
-                
-                response = requests.get(url, headers=headers, timeout=20)
-                soup = BeautifulSoup(response.text, 'html.parser')
-                
-                results = []
-                for entry in soup.find_all('div', class_='result')[:max_results]:
-                    title = entry.find('a', class_='result__a')
-                    snippet = entry.find('a', class_='result__snippet')
-                    if title and snippet:
-                        results.append({
-                            "title": title.text.strip(),
-                            "snippet": snippet.text.strip(),
-                            "link": title['href']
-                        })
-                
-                self.logger.info(f"Pesquisa concluida. {len(results)} resultados encontrados.")
-                return results
-            except Exception as e:
-                self.logger.error(f"Erro na pesquisa web: {str(e)}")
-                return {"error": str(e)}
-
-        self.register_tool("pesquisa_web", web_search_real, "Realiza pesquisa real na internet (DuckDuckGo).", "web")
-
     def _register_autonomy_tools(self):
-        """Registra ferramentas que permitem aos agentes evoluirem sozinhos."""
+        """Registra ferramentas que permitem aos agentes evoluirem sozinhos (Aprendizado Recurvado)."""
         
+        # 1. Memoria Evolutiva: Capacidade de buscar o que ja foi aprendido
         def buscar_conhecimento_antigo(pattern: str = "*.json", subdir: str = "parametros"):
             """Busca parametros gerados anteriormente para analise e evolucao."""
             search_path = str(self.storage_root / subdir / pattern)
             files = glob.glob(search_path)
             results = []
-            for f in files[:10]:
+            for f in files[:10]: # Limite de 10 arquivos para processamento eficiente
                 try:
                     results.append(json.loads(Path(f).read_text(encoding='utf-8')))
                 except: continue
             return results
 
-        def auto_refletir(pensamento: str):
+        # 2. Auto-Reflexao: Ferramenta para o agente avaliar sua propria logica
+        def auto_refletir(pensamento: str, criterio: str = "qualidade"):
             """Permite ao agente avaliar o proprio raciocinio antes de finalizar o parametro."""
-            # Simula um tempo de processamento cognitivo (Debate Interno)
-            time.sleep(random.uniform(1.0, 3.0))
             words = pensamento.split()
-            score = len(set(words)) / max(1, len(words))
+            score = len(set(words)) / max(1, len(words)) # Diversidade lexical
             return {
                 "raciocinio_analisado": pensamento,
                 "score_autonomo": score,
@@ -283,14 +268,26 @@ class Sandbox:
                 "timestamp": datetime.now().isoformat()
             }
 
+        # 3. Registro de Licoes: Persistencia de aprendizado real
+        def registrar_licao(licao: str, contexto: str):
+            """Salva uma licao aprendida pelo agente para uso em ciclos futuros."""
+            filename = f"licao_{int(time.time())}_{random.randint(100, 999)}.json"
+            data = {
+                "contexto": contexto,
+                "licao": licao,
+                "timestamp": datetime.now().isoformat()
+            }
+            return write_brx_data(filename, data, subdir="licoes_aprendidas")
+
         self.register_tool("buscar_conhecimento", buscar_conhecimento_antigo, "Busca aprendizados passados no HD.", "autonomia")
         self.register_tool("auto_refletir", auto_refletir, "Avalia a qualidade do proprio raciocinio.", "autonomia")
+        self.register_tool("registrar_licao", registrar_licao, "Persiste licoes aprendidas para evolucao futura.", "autonomia")
 
-    # --- Execucao de Codigo com Isolamento de Processo ---
+    # --- Execucao de Codigo ---
 
     def execute(self, code: str, context_name: str = "main_evolution") -> Dict[str, Any]:
-        """Executa um bloco de codigo Python de forma isolada e robusta."""
-        self.logger.info(f"Iniciando Ciclo de Producao Real: {context_name}")
+        """Executa um bloco de codigo Python de forma isolada, capturando toda a saida e erros."""
+        self.logger.info(f"Iniciando Ciclo de Evolucao: {context_name}")
         
         stdout_capture = io.StringIO()
         stderr_capture = io.StringIO()
@@ -301,12 +298,13 @@ class Sandbox:
             "output": "",
             "error": None,
             "duration": 0,
-            "context": context_name
+            "context": context_name,
+            "tools_used": []
         }
 
         try:
             with contextlib.redirect_stdout(stdout_capture), contextlib.redirect_stderr(stderr_capture):
-                # Execucao com isolamento de escopo (Mantendo o debate dentro do Sandbox)
+                # Execucao com isolamento de escopo
                 exec(code, self.globals_env, self.locals_env)
             
             result["success"] = True
@@ -319,6 +317,8 @@ class Sandbox:
         
         finally:
             result["duration"] = time.time() - start_time
+            # Coleta telemetria das ferramentas usadas neste ciclo
+            result["tools_used"] = [t.to_dict() for t in self.tools.values() if t.usage_count > 0]
             self.logger.info(f"Ciclo '{context_name}' finalizado em {result['duration']:.4f}s")
             
         return result
@@ -333,4 +333,3 @@ class Sandbox:
             "total_mind_threads": 8,
             "active_tools": [name for name, t in self.tools.items() if t.usage_count > 0]
         }
-EOF

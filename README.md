@@ -32,20 +32,20 @@ O conceito central de inteligencia aqui e a superacao constante: a medida que o 
 
 Isso faz com que os parametros "descam de nivel" — nao porque ficaram piores, mas porque o patamar de inteligencia do modelo subiu tanto que o que era considerado "avancado" anteriormente passa a ser o conhecimento basico e fundamental para o proximo nivel de evolucao.
 
-## 🚀 Novidade: Sandbox Modular e Sistema de Ferramentas (v5.1)
+## Novidade: Sandbox Modular e Sistema de Ferramentas (v5.1)
 
-Agora o ecossistema inclui um ambiente **Sandbox Modular** em Python para a execução segura e controlada de agentes. Este ambiente permite que os agentes utilizem ferramentas registradas (como busca web, processamento de arquivos e análise de dados) com total isolamento e logs detalhados.
+Agora o ecossistema inclui um ambiente Sandbox Modular em Python para a execucao segura e controlada de agentes. Este ambiente permite que os agentes utilizem ferramentas registradas (como busca web, processamento de arquivos e analise de dados) com total isolamento e logs detalhados.
 
-### 🛠️ Instalação Rápida (Ubuntu) - Setup Completo em 1 Comando
+### Instalacao Rapida (Ubuntu) - Setup Completo em 1 Comando
 
-Para configurar todo o ambiente no seu Ubuntu, incluindo a criação de diretórios no HD externo (`/media/dragonscp/Novo volume/modelo BRX`), instalação de dependências do sistema e bibliotecas Python, execute o bloco abaixo no seu terminal:
+Para configurar todo o ambiente no seu Ubuntu, incluindo a criacao de diretorios no HD externo (/media/dragonscp/Novo volume/modelo BRX), instalacao de dependencias do sistema e bibliotecas Python, execute o bloco abaixo no seu terminal:
 
 ```bash
-# 1. Baixe e execute o script mestre de configuração
+# 1. Baixe e execute o script mestre de configuracao
 curl -O https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/setup_completo.sh 2>/dev/null || cat << 'EOF' > setup_completo.sh
 #!/bin/bash
 set -e
-echo "🚀 INICIANDO SETUP COMPLETO NO HD DE 400GB..."
+echo "INICIANDO SETUP COMPLETO NO HD DE 400GB..."
 STORAGE_ROOT="/media/dragonscp/Novo volume/modelo BRX"
 PROJECT_DIR="$HOME/Agents-Evolution-Sandbox"
 sudo mkdir -p "$STORAGE_ROOT/dados" "$STORAGE_ROOT/logs" "$STORAGE_ROOT/parametros"
@@ -93,11 +93,11 @@ def main():
             f.write(f"[{time.ctime()}] {tipo}: {conteudo}\n")
         return "Salvo no HD"
     sb.register_tool("salvar", salvar_parametro)
-    codigo = "print('Iniciando Evolução de Parâmetros BRX...'); status = salvar('POSITIVO', 'Nova lógica detectada.'); print(f'Status do HD: {status}')"
+    codigo = "print('Iniciando Evolucao de Parametros BRX...'); status = salvar('POSITIVO', 'Nova logica detectada.'); print(f'Status do HD: {status}')"
     sb.run(codigo)
 if __name__ == "__main__": main()
 GEN
-echo "✅ SETUP CONCLUÍDO! Para rodar agora, digite:"
+echo "SETUP CONCLUIDO! Para rodar agora, digite:"
 echo "source venv/bin/activate && python3 gerador_brx.py"
 EOF
 
@@ -105,11 +105,11 @@ chmod +x setup_completo.sh
 ./setup_completo.sh
 ```
 
-### 📈 Características do Sandbox
-- **Ambiente Isolado**: Execução segura de código Python via `exec()`.
-- **Sistema de Ferramentas**: Registro dinâmico de funções (Tools) para os agentes.
-- **Persistência em HD**: Configurado nativamente para salvar parâmetros e logs no seu volume de 400GB.
-- **Logs Profissionais**: Monitoramento em tempo real do que o agente está fazendo.
+### Caracteristicas do Sandbox
+- **Ambiente Isolado**: Execucao segura de codigo Python via exec().
+- **Sistema de Ferramentas**: Registro dinamico de funcoes (Tools) para os agentes.
+- **Persistencia em HD**: Configurado nativamente para salvar parametros e logs no seu volume de 400GB.
+- **Logs Profissionais**: Monitoramento em tempo real do que o agente esta fazendo.
 
 ## Estrutura do Repositorio
 
@@ -125,7 +125,7 @@ O projeto e organizado de forma modular para garantir que o crescimento do ecoss
 
 ## Configuracao e Escalabilidade
 
-O Agents-Evolution e otimizado para se adaptar ao hardware disponivel. Embora o padrao seja configurado para **8 threads**, o sistema e totalmente escalavel. Ele detecta a capacidade do seu dispositivo e pode expandir o numero de "colegas na mesa" conforme o numero de threads disponiveis, permitindo debates mais profundos e processamento acelerado.
+O Agents-Evolution e otimizado para se adaptar ao hardware disponivel. Embora o padrao seja configurado para 8 threads, o sistema e totalmente escalavel. Ele detecta a capacidade do seu dispositivo e pode expandir o numero de "colegas na mesa" conforme o numero de threads disponiveis, permitindo debates mais profundos e processamento acelerado.
 
 ---
 Desenvolvido para superar os limites da geracao de conhecimento em IA atraves da colaboracao autonoma e evolucao constante.

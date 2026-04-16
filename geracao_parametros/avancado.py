@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-╔══════════════════════════════════════════════════════════════════════════════════╗
-║                                                                                  ║
-║   SISTEMA MULTI-AGENTE INTELIGENTE v5.0 - MÓDULO AVANÇADO                        ║
-║   Extensões: API REST, CLI Interativo, Visualização, Exportação                  ║
-║                                                                                  ║
-║   Use este arquivo junto com o sistema_agentes_v5_producao.py                    ║
-║   ou combine ambos em um único arquivo maior                                     ║
-║                                                                                  ║
-╚══════════════════════════════════════════════════════════════════════════════════╝
+                                                                                    
+                                                                                    
+    SISTEMA MULTI-AGENTE INTELIGENTE v5.0 - MÓDULO AVANÇADO                         
+    Extensões: API REST, CLI Interativo, Visualização, Exportação                   
+                                                                                    
+    Use este arquivo junto com o sistema_agentes_v5_producao.py                     
+    ou combine ambos em um único arquivo maior                                      
+                                                                                    
+                                                                                    
 """
 
 # ====================================================================================
@@ -87,14 +87,14 @@ class CLIInterativo:
                 if cmd in self.comandos:
                     self.comandos[cmd](args)
                 else:
-                    print(f"❌ Comando desconhecido: {cmd}")
+                    print(f" Comando desconhecido: {cmd}")
                     print("   Digite 'ajuda' para ver os comandos")
                     
             except KeyboardInterrupt:
                 print("\n👋 Saindo...")
                 break
             except Exception as e:
-                print(f"❌ Erro: {e}")
+                print(f" Erro: {e}")
     
     def cmd_ajuda(self, args):
         """Mostra ajuda."""
@@ -118,16 +118,16 @@ class CLIInterativo:
             from sistema_agentes_v5_producao import db
             stats = db.get_estatisticas()
             
-            print("\n📊 STATUS DO SISTEMA:")
+            print("\n STATUS DO SISTEMA:")
             print("-" * 40)
-            print(f"  📦 Parâmetros: {stats['total_parametros']}")
-            print(f"  🗣️  Críticas: {stats['total_criticas']}")
-            print(f"  🧠 Memórias: {stats['total_memorias']}")
-            print(f"  📊 Debates: {stats['total_debates']}")
+            print(f"   Parâmetros: {stats['total_parametros']}")
+            print(f"    Críticas: {stats['total_criticas']}")
+            print(f"   Memórias: {stats['total_memorias']}")
+            print(f"   Debates: {stats['total_debates']}")
             print(f"  ⭐ Score médio: {stats['score_medio_geral']:.4f}")
             print()
         except Exception as e:
-            print(f"❌ Erro: {e}")
+            print(f" Erro: {e}")
     
     def cmd_topicos(self, args):
         """Lista tópicos."""
@@ -146,44 +146,44 @@ class CLIInterativo:
     def cmd_processar(self, args):
         """Processa um tópico."""
         if not args:
-            print("❌ Uso: processar <topico>")
+            print(" Uso: processar <topico>")
             return
         
         topico = args[0]
-        print(f"\n🚀 Processando: {topico}")
+        print(f"\n Processando: {topico}")
         
         try:
             from sistema_agentes_v5_producao import ProcessadorTopico
             processador = ProcessadorTopico()
             resultado = processador.processar(topico)
             
-            print(f"\n✅ Concluído!")
+            print(f"\n Concluído!")
             print(f"   Score: {resultado['score_consenso']:.2%}")
             print(f"   Parâmetros: +{resultado['parametros']['positivos']} "
                   f"-{resultado['parametros']['negativos']} "
                   f"?{resultado['parametros']['incertos']}")
         except Exception as e:
-            print(f"❌ Erro: {e}")
+            print(f" Erro: {e}")
     
     def cmd_buscar(self, args):
         """Busca na web."""
         if not args:
-            print("❌ Uso: buscar <query>")
+            print(" Uso: buscar <query>")
             return
         
         query = ' '.join(args)
-        print(f"\n🔍 Buscando: {query}")
+        print(f"\n Buscando: {query}")
         
         try:
             from sistema_agentes_v5_producao import web_search
             resultados = web_search.buscar(query)
             
-            print(f"\n✅ {len(resultados)} resultados:")
+            print(f"\n {len(resultados)} resultados:")
             for i, r in enumerate(resultados[:5], 1):
                 print(f"\n  {i}. {r['titulo']}")
                 print(f"     {r['snippet'][:100]}...")
         except Exception as e:
-            print(f"❌ Erro: {e}")
+            print(f" Erro: {e}")
     
     def cmd_memoria(self, args):
         """Mostra memória."""
@@ -193,12 +193,12 @@ class CLIInterativo:
             from sistema_agentes_v5_producao import db
             memorias = db.recuperar_memoria(topico=topico, limit=10)
             
-            print(f"\n🧠 MEMÓRIA ({len(memorias)} entradas):")
+            print(f"\n MEMÓRIA ({len(memorias)} entradas):")
             print("-" * 40)
             for m in memorias[:5]:
-                print(f"  • [{m['tipo']}] Relevância: {m['relevancia']:.2f}")
+                print(f"  - [{m['tipo']}] Relevância: {m['relevancia']:.2f}")
         except Exception as e:
-            print(f"❌ Erro: {e}")
+            print(f" Erro: {e}")
     
     def cmd_exportar(self, args):
         """Exporta dados."""
@@ -219,14 +219,14 @@ class CLIInterativo:
                 df = pd.DataFrame(parametros)
                 df.to_csv(filepath, index=False)
             
-            print(f"\n✅ Exportado: {filepath}")
+            print(f"\n Exportado: {filepath}")
         except Exception as e:
-            print(f"❌ Erro: {e}")
+            print(f" Erro: {e}")
     
     def cmd_visualizar(self, args):
         """Gera visualizações."""
         if not MATPLOTLIB_AVAILABLE:
-            print("❌ Matplotlib não instalado")
+            print(" Matplotlib não instalado")
             return
         
         try:
@@ -235,7 +235,7 @@ class CLIInterativo:
             parametros = db.buscar_parametros(limit=1000)
             
             if not parametros:
-                print("❌ Nenhum parâmetro para visualizar")
+                print(" Nenhum parâmetro para visualizar")
                 return
             
             # Gráfico de distribuição de scores
@@ -269,13 +269,13 @@ class CLIInterativo:
             plt.savefig(filepath, dpi=150, bbox_inches='tight')
             plt.close()
             
-            print(f"\n✅ Visualização salva: {filepath}")
+            print(f"\n Visualização salva: {filepath}")
         except Exception as e:
-            print(f"❌ Erro: {e}")
+            print(f" Erro: {e}")
     
     def cmd_limpar(self, args):
         """Limpa dados antigos."""
-        print("\n⚠️  Função não implementada nesta versão")
+        print("\n  Função não implementada nesta versão")
         print("   Use SQL diretamente no banco SQLite")
     
     def cmd_sair(self, args):
@@ -291,7 +291,7 @@ class CLIInterativo:
 def criar_api() -> Optional['Flask']:
     """Cria aplicação Flask para API REST."""
     if not FLASK_AVAILABLE:
-        print("❌ Flask não instalado. Instale com: pip install flask")
+        print(" Flask não instalado. Instale com: pip install flask")
         return None
     
     app = Flask(__name__)
@@ -376,7 +376,7 @@ def iniciar_api(host='0.0.0.0', port=5000):
     """Inicia servidor API."""
     app = criar_api()
     if app:
-        print(f"🚀 API iniciando em http://{host}:{port}")
+        print(f" API iniciando em http://{host}:{port}")
         app.run(host=host, port=port, debug=False)
 
 
@@ -440,15 +440,15 @@ class ExportadorRelatorios:
     </style>
 </head>
 <body>
-    <h1>📊 Relatório Sistema Multi-Agente</h1>
+    <h1> Relatório Sistema Multi-Agente</h1>
     <p>Gerado em: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
     
     <div class="stats">
         <h2>Estatísticas</h2>
-        <p>📦 Parâmetros: {stats['total_parametros']}</p>
-        <p>🗣️ Críticas: {stats['total_criticas']}</p>
-        <p>🧠 Memórias: {stats['total_memorias']}</p>
-        <p>📊 Debates: {stats['total_debates']}</p>
+        <p> Parâmetros: {stats['total_parametros']}</p>
+        <p> Críticas: {stats['total_criticas']}</p>
+        <p> Memórias: {stats['total_memorias']}</p>
+        <p> Debates: {stats['total_debates']}</p>
         <p>⭐ Score Médio: {stats['score_medio_geral']:.4f}</p>
     </div>
     
@@ -553,10 +553,10 @@ def exportar_relatorio(formato='html'):
     elif formato == 'html':
         path = exportador.exportar_html()
     else:
-        print(f"❌ Formato desconhecido: {formato}")
+        print(f" Formato desconhecido: {formato}")
         return
     
-    print(f"✅ Relatório exportado: {path}")
+    print(f" Relatório exportado: {path}")
 
 
 def gerar_dashboard():
@@ -565,9 +565,9 @@ def gerar_dashboard():
     path = exportador.gerar_dashboard()
     
     if path:
-        print(f"✅ Dashboard gerado: {path}")
+        print(f" Dashboard gerado: {path}")
     else:
-        print("❌ Não foi possível gerar dashboard")
+        print(" Não foi possível gerar dashboard")
 
 
 # ====================================================================================

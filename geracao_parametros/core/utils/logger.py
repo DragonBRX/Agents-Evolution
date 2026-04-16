@@ -30,11 +30,11 @@ class ColoredFormatter(logging.Formatter):
         
         # Adiciona emoji baseado no nível
         emojis = {
-            'DEBUG': '🔍',
-            'INFO': 'ℹ️',
-            'WARNING': '⚠️',
-            'ERROR': '❌',
-            'CRITICAL': '🔥'
+            'DEBUG': '',
+            'INFO': '',
+            'WARNING': '',
+            'ERROR': '',
+            'CRITICAL': ''
         }
         
         record.levelname = f"{color}{emojis.get(record.levelname, '')} {record.levelname}{reset}"
@@ -50,19 +50,19 @@ class AgentLogger:
     
     def pensamento(self, mensagem: str):
         """Loga um pensamento do agente."""
-        self.logger.debug(f"💭 [{self.agente_nome}] {mensagem}")
+        self.logger.debug(f" [{self.agente_nome}] {mensagem}")
     
     def acao(self, mensagem: str):
         """Loga uma ação do agente."""
-        self.logger.info(f"🎯 [{self.agente_nome}] {mensagem}")
+        self.logger.info(f" [{self.agente_nome}] {mensagem}")
     
     def critica(self, mensagem: str):
         """Loga uma crítica do agente."""
-        self.logger.info(f"🔍 [{self.agente_nome}] {mensagem}")
+        self.logger.info(f" [{self.agente_nome}] {mensagem}")
     
     def erro(self, mensagem: str):
         """Loga um erro do agente."""
-        self.logger.error(f"💥 [{self.agente_nome}] {mensagem}")
+        self.logger.error(f" [{self.agente_nome}] {mensagem}")
 
 
 def setup_logging(

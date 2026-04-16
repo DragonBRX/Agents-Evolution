@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-╔══════════════════════════════════════════════════════════════════════════════════╗
-║                                                                                  ║
-║   SISTEMA MULTI-AGENTE INTELIGENTE v5.0 - PRODUÇÃO                               ║
-║   8 Mentes Autônomas | Debate Coletivo | Auto-Melhoria Contínua                  ║
-║                                                                                  ║
-║   Arquivo único de treinamento - Copie e cole diretamente no terminal            ║
-║                                                                                  ║
-║   Funcionalidades:                                                               ║
-║   • 8 Agentes autônomos com personalidades únicas                                ║
-║   • Sistema de debate com múltiplas rodadas                                      ║
-║   • Geração e classificação de parâmetros (positivos/negativos/incertos)         ║
-║   • Banco de dados SQLite com SQLAlchemy ORM                                     ║
-║   • Busca web integrada (DuckDuckGo)                                             ║
-║   • Memória persistente entre execuções                                          ║
-║   • Auto-melhoria baseada em parâmetros anteriores                               ║
-║                                                                                  ║
-╚══════════════════════════════════════════════════════════════════════════════════╝
+                                                                                    
+                                                                                    
+    SISTEMA MULTI-AGENTE INTELIGENTE v5.0 - PRODUÇÃO                                
+    8 Mentes Autônomas | Debate Coletivo | Auto-Melhoria Contínua                   
+                                                                                    
+    Arquivo único de treinamento - Copie e cole diretamente no terminal             
+                                                                                    
+    Funcionalidades:                                                                
+    - 8 Agentes autônomos com personalidades únicas                                 
+    - Sistema de debate com múltiplas rodadas                                       
+    - Geração e classificação de parâmetros (positivos/negativos/incertos)          
+    - Banco de dados SQLite com SQLAlchemy ORM                                      
+    - Busca web integrada (DuckDuckGo)                                              
+    - Memória persistente entre execuções                                           
+    - Auto-melhoria baseada em parâmetros anteriores                                
+                                                                                    
+                                                                                    
 """
 
 # ====================================================================================
@@ -135,18 +135,18 @@ class ColoredFormatter(logging.Formatter):
     }
     
     EMOJIS = {
-        'DEBUG': '🔍',
-        'INFO': 'ℹ️',
-        'WARNING': '⚠️',
-        'ERROR': '❌',
-        'CRITICAL': '🔥'
+        'DEBUG': '',
+        'INFO': '',
+        'WARNING': '',
+        'ERROR': '',
+        'CRITICAL': ''
     }
     
     def format(self, record: logging.LogRecord) -> str:
         color = self.COLORS.get(record.levelname, '')
         reset = Style.RESET_ALL
         emoji = self.EMOJIS.get(record.levelname, '')
-        record.levelname = f"{color}{emoji} {record.levelname}{reset}"
+        record.levelname = f"{color}{record.levelname}{reset}"
         return super().format(record)
 
 
@@ -364,7 +364,7 @@ class DatabaseManager:
         
         conn.commit()
         conn.close()
-        logger.info("✅ Banco de dados inicializado")
+        logger.info(" Banco de dados inicializado")
     
     # === OPERAÇÕES COM PARÂMETROS ===
     
@@ -699,18 +699,18 @@ class WebSearchEngine:
     def buscar(self, query: str, use_cache: bool = True) -> List[Dict]:
         """Realiza busca na web."""
         if not self.enabled:
-            logger.warning("⚠️ Busca web desabilitada ou requests não instalado")
+            logger.warning(" Busca web desabilitada ou requests não instalado")
             return []
         
         # Verifica cache
         if use_cache:
             cached = db.get_cache_busca(query)
             if cached:
-                logger.info(f"🔄 Cache hit para: {truncate_text(query, 50)}")
+                logger.info(f" Cache hit para: {truncate_text(query, 50)}")
                 return cached
         
         try:
-            logger.info(f"🔍 Buscando na web: {truncate_text(query, 50)}")
+            logger.info(f" Buscando na web: {truncate_text(query, 50)}")
             
             # DuckDuckGo HTML
             url = f"https://html.duckduckgo.com/html/?q={requests.utils.quote(query)}"
@@ -723,11 +723,11 @@ class WebSearchEngine:
             if use_cache:
                 db.salvar_cache_busca(query, resultados)
             
-            logger.info(f"✅ {len(resultados)} resultados encontrados")
+            logger.info(f" {len(resultados)} resultados encontrados")
             return resultados
             
         except Exception as e:
-            logger.error(f"❌ Erro na busca web: {e}")
+            logger.error(f" Erro na busca web: {e}")
             return []
     
     def _parse_resultados(self, html: str) -> List[Dict]:
@@ -836,7 +836,7 @@ class AgenteAutonomo(ABC):
     
     def processar(self, conteudo: str, topico: str, memoria: List[Dict] = None) -> Dict:
         """Processa conteúdo e gera parâmetros."""
-        self.logger.info(f"🧠 {self.nome} processando '{topico}'")
+        self.logger.info(f" {self.nome} processando '{topico}'")
         
         # Contexto com memória
         contexto = {'memoria': memoria or []}
@@ -1548,21 +1548,21 @@ class SalaDebate:
         self, conteudo: str, topico: str, num_rodadas: int = 15
     ) -> Dict:
         """Inicia debate completo."""
-        self.logger.info(f"🎭 Iniciando debate: '{topico}' ({num_rodadas} rodadas)")
+        self.logger.info(f" Iniciando debate: '{topico}' ({num_rodadas} rodadas)")
         
         # Cria ciclo no banco
         self.debate_id = db.criar_ciclo_debate(topico, 1)
         
         # Busca informações na web se habilitado
         if self.usar_web_search:
-            self.logger.info("🌐 Buscando informações na web...")
+            self.logger.info(" Buscando informações na web...")
             info_web = web_search.buscar_e_resumir(topico, topico)
             if info_web:
                 conteudo += f"\n\n[Informações da web]:\n{info_web}"
         
         # Recupera memória relevante
         memoria = db.recuperar_memoria(topico=topico, limit=20)
-        self.logger.info(f"🧠 Memória recuperada: {len(memoria)} entradas")
+        self.logger.info(f" Memória recuperada: {len(memoria)} entradas")
         
         # FASE 1: Processamento paralelo
         self.logger.info("[Fase 1] Processamento inicial paralelo...")
@@ -1585,7 +1585,7 @@ class SalaDebate:
             len(self.historico_criticas)
         )
         
-        self.logger.info(f"✅ Debate concluído: {len(self.historico_criticas)} críticas")
+        self.logger.info(f" Debate concluído: {len(self.historico_criticas)} críticas")
         
         return self.consenso_global
     
@@ -1604,7 +1604,7 @@ class SalaDebate:
                 agente = futures[future]
                 resultado = future.result()
                 if resultado:
-                    self.logger.info(f"  ✓ {agente.nome} processou")
+                    self.logger.info(f"   {agente.nome} processou")
     
     def _fase_criticas(self, num_rodadas: int):
         """Fase 2: Ciclos de crítica cruzada."""
@@ -1616,7 +1616,7 @@ class SalaDebate:
                 scores = [a.estado.parametros_locais.get('score_inicial', 0) for a in self.agentes]
                 score_medio = sum(scores) / len(scores)
                 if score_medio > CONFIG.SCORE_CONVERGENCIA:
-                    self.logger.info(f"  🛑 Convergência atingida na rodada {rodada + 1}")
+                    self.logger.info(f"   Convergência atingida na rodada {rodada + 1}")
                     break
             
             criticas_rodada = []
@@ -1644,7 +1644,7 @@ class SalaDebate:
             self.historico_criticas.extend(criticas_rodada)
             
             if (rodada + 1) % 3 == 0:
-                self.logger.info(f"  ✓ Rodada {rodada + 1}: {len(criticas_rodada)} críticas")
+                self.logger.info(f"   Rodada {rodada + 1}: {len(criticas_rodada)} críticas")
     
     def _fase_consenso(self, topico: str):
         """Fase 3: Formação de consenso."""
@@ -1761,7 +1761,7 @@ class ClassificadorParametros:
                 rodada=1
             )
         
-        logger.info(f"💾 Parâmetros salvos: +{len(positivos)} | -{len(negativos)} | ?{len(incertos)}")
+        logger.info(f" Parâmetros salvos: +{len(positivos)} | -{len(negativos)} | ?{len(incertos)}")
 
 
 # ====================================================================================
@@ -1780,7 +1780,7 @@ class ProcessadorTopico:
     ) -> Dict:
         """Processa tópico completo."""
         logger.info(f"\n{'='*70}")
-        logger.info(f"🚀 PROCESSANDO: '{topico.upper()}'")
+        logger.info(f" PROCESSANDO: '{topico.upper()}'")
         logger.info(f"{'='*70}")
         
         # Gera conteúdo base se não fornecido
@@ -1853,7 +1853,7 @@ class ProcessadorTopico:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(saida, f, indent=2, ensure_ascii=False, default=str)
         
-        logger.info(f"📄 Saída salva: {filepath.name}")
+        logger.info(f" Saída salva: {filepath.name}")
 
 
 # ====================================================================================
@@ -1885,14 +1885,14 @@ class Orquestrador:
         
         # Estatísticas iniciais
         stats_inicial = db.get_estatisticas()
-        logger.info(f"📊 Banco de dados: {stats_inicial['total_parametros']} parâmetros")
-        logger.info(f"🧠 Memória: {stats_inicial['total_memorias']} entradas")
-        logger.info(f"🗣️ Debates: {stats_inicial['total_debates']} realizados")
+        logger.info(f" Banco de dados: {stats_inicial['total_parametros']} parâmetros")
+        logger.info(f" Memória: {stats_inicial['total_memorias']} entradas")
+        logger.info(f" Debates: {stats_inicial['total_debates']} realizados")
         
         resultados = []
         
         # Processa tópicos em paralelo
-        logger.info(f"\n🎯 Processando {len(topicos)} tópicos...")
+        logger.info(f"\n Processando {len(topicos)} tópicos...")
         
         with ThreadPoolExecutor(max_workers=CONFIG.PARALELISMO_TOPICO) as executor:
             futures = {
@@ -1905,10 +1905,10 @@ class Orquestrador:
                 try:
                     resultado = future.result()
                     resultados.append(resultado)
-                    logger.info(f"\n✅ CONCLUÍDO: {topico.upper()}")
+                    logger.info(f"\n CONCLUÍDO: {topico.upper()}")
                     logger.info(f"   Score: {resultado['score_consenso']:.2%}")
                 except Exception as e:
-                    logger.error(f"\n❌ ERRO em {topico}: {e}")
+                    logger.error(f"\n ERRO em {topico}: {e}")
         
         # Relatório final
         self._relatorio_final(resultados)
@@ -1918,51 +1918,51 @@ class Orquestrador:
     def _mostrar_banner(self):
         """Mostra banner inicial."""
         banner = f"""
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                                                                              ║
-║   {CONFIG.NOME:<74} ║
-║   Versão {CONFIG.VERSAO:<67} ║
-║                                                                              ║
-║   8 Agentes Autônomos | Debate Coletivo | Auto-Melhoria Contínua            ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+                                                                                
+                                                                                
+    {CONFIG.NOME:<74}  
+    Versão {CONFIG.VERSAO:<67}  
+                                                                                
+    8 Agentes Autônomos | Debate Coletivo | Auto-Melhoria Contínua             
+                                                                                
+                                                                                
         """
         print(Fore.CYAN + banner + Style.RESET_ALL)
-        logger.info(f"📍 Base: {CONFIG.BASE_DIR}")
-        logger.info(f"💾 Banco: {CONFIG.DB_PATH}")
-        logger.info(f"📂 Saída: {CONFIG.SAIDA_DIR}")
-        logger.info(f"🌐 Web Search: {'Sim' if self.usar_web_search else 'Não'}")
+        logger.info(f" Base: {CONFIG.BASE_DIR}")
+        logger.info(f" Banco: {CONFIG.DB_PATH}")
+        logger.info(f" Saída: {CONFIG.SAIDA_DIR}")
+        logger.info(f" Web Search: {'Sim' if self.usar_web_search else 'Não'}")
     
     def _relatorio_final(self, resultados: List[Dict]):
         """Gera relatório final."""
         stats_final = db.get_estatisticas()
         
         print("\n" + "="*70)
-        logger.info("📊 RELATÓRIO FINAL")
+        logger.info(" RELATÓRIO FINAL")
         print("="*70)
         
-        logger.info(f"✅ Tópicos processados: {len(resultados)}")
+        logger.info(f" Tópicos processados: {len(resultados)}")
         
         if resultados:
             score_medio = sum(r['score_consenso'] for r in resultados) / len(resultados)
-            logger.info(f"📈 Score médio: {score_medio:.2%}")
+            logger.info(f" Score médio: {score_medio:.2%}")
         
         total_params = sum(
             r['parametros']['positivos'] + r['parametros']['negativos'] + r['parametros']['incertos']
             for r in resultados
         )
-        logger.info(f"📦 Total parâmetros gerados: {total_params}")
+        logger.info(f" Total parâmetros gerados: {total_params}")
         
-        logger.info(f"💾 Parâmetros no BD: {stats_final['total_parametros']}")
-        logger.info(f"🗣️ Críticas no BD: {stats_final['total_criticas']}")
-        logger.info(f"🧠 Memórias no BD: {stats_final['total_memorias']}")
-        logger.info(f"📊 Score médio geral: {stats_final['score_medio_geral']:.4f}")
+        logger.info(f" Parâmetros no BD: {stats_final['total_parametros']}")
+        logger.info(f" Críticas no BD: {stats_final['total_criticas']}")
+        logger.info(f" Memórias no BD: {stats_final['total_memorias']}")
+        logger.info(f" Score médio geral: {stats_final['score_medio_geral']:.4f}")
         
-        logger.info("\n🔄 Sistema pronto para novo ciclo de aprendizado")
-        logger.info("🧠 Memória global alimentando próximas execuções")
+        logger.info("\n Sistema pronto para novo ciclo de aprendizado")
+        logger.info(" Memória global alimentando próximas execuções")
         
         print("="*70)
-        logger.info("✨ TREINAMENTO FINALIZADO!")
+        logger.info(" TREINAMENTO FINALIZADO!")
         print("="*70 + "\n")
 
 
@@ -1990,10 +1990,10 @@ def main(
         orquestrador = Orquestrador(usar_web_search=usar_web_search)
         return orquestrador.executar(topicos, num_rodadas)
     except KeyboardInterrupt:
-        logger.warning("\n⚠️ Interrompido pelo usuário")
+        logger.warning("\n Interrompido pelo usuário")
         return []
     except Exception as e:
-        logger.error(f"\n❌ Erro crítico: {e}")
+        logger.error(f"\n Erro crítico: {e}")
         raise
 
 
@@ -2013,6 +2013,6 @@ if __name__ == "__main__":
     print("RESUMO DOS RESULTADOS:")
     print("="*70)
     for r in resultados:
-        print(f"  • {r['topico']}: {r['score_consenso']:.2%} | "
+        print(f"  - {r['topico']}: {r['score_consenso']:.2%} | "
               f"+{r['parametros']['positivos']} -{r['parametros']['negativos']} "
               f"?{r['parametros']['incertos']}")

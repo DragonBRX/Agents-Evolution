@@ -15,14 +15,15 @@ Imagine um escritorio onde cada thread do processador (por padrao, 8 threads) re
 3.  **A Roda de Informacoes (Mesa de Conversas)**: O diferencial do sistema e o ciclo de debate. Em vez de trabalharem isolados, os agentes formam um circulo de conversa. Uma informacao ou parametro gerado por um agente e passado para o proximo na roda. Eles conversam entre si, criticam o trabalho do colega e refinam o conteudo continuamente.
 4.  **Acordo e Consenso**: O proprio codigo decide quantas vezes essa conversa deve circular na mesa ate que se chegue ao melhor acordo possivel. Cada agente traduz os parametros para sua propria perspectiva, garantindo uma cobertura completa do topico.
 
-## Novidade: Sandbox Modular e Raciocinio Avancado (v5.3)
+## Novidade: Autonomia Real e Memoria Evolutiva
 
-A versao 5.3 traz a integracao definitiva entre a **Logica Original de 8 Mentes** e as ferramentas de **Raciocinio Avancado** do AgentForge, tudo rodando em um Sandbox isolado e robusto.
+O ecossistema agora integra capacidades de **Autonomia Real**, permitindo que as 8 mentes profissionais evoluam sozinhas a cada ciclo de geracao.
 
-### Caracteristicas da Versao 5.3
+### Caracteristicas da Autonomia
 - **8 Mentes Profissionais Preservadas**: Designer, Analista, Inovador, Critico, Revisor, Validador, Estrategista e Memoria.
-- **Sandbox Robusto**: Ambiente de execucao isolado com suporte a logs profissionais e tratamento de erros detalhado.
-- **Ferramentas AgentForge Integradas**: `executar_shell`, `analisar_qualidade`, `escrever_arquivo` e `ler_arquivo`.
+- **Memoria Evolutiva**: Os agentes acessam o que ja aprenderam no HD de 400GB para construir sobre acertos e evitar erros passados.
+- **Auto-Reflexao**: Cada agente avalia a qualidade do proprio raciocinio antes de finalizar um parametro.
+- **Aprendizado Recurvado**: O sistema registra "licoes aprendidas" que sao consultadas em ciclos futuros de debate.
 - **Persistencia Nativa em HD**: Totalmente configurado para o seu volume de 400GB (/media/dragonscp/Novo volume/modelo BRX).
 
 ### Instalacao Rapida (Ubuntu) - Setup Completo em 1 Comando
@@ -30,94 +31,16 @@ A versao 5.3 traz a integracao definitiva entre a **Logica Original de 8 Mentes*
 Para configurar todo o ambiente no seu Ubuntu, incluindo a criacao de diretorios no HD externo, instalacao de dependencias do sistema e bibliotecas Python, execute o bloco abaixo no seu terminal:
 
 ```bash
-# 1. Baixe e execute o script mestre de configuracao v5.3
-curl -O https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/setup_completo.sh 2>/dev/null || cat << 'EOF' > setup_completo.sh
-#!/bin/bash
-set -e
-echo "INICIANDO SETUP COMPLETO NO HD DE 400GB (v5.3)..."
-STORAGE_ROOT="/media/dragonscp/Novo volume/modelo BRX"
-PROJECT_DIR="$HOME/Agents-Evolution-Sandbox"
-sudo mkdir -p "$STORAGE_ROOT/dados" "$STORAGE_ROOT/logs" "$STORAGE_ROOT/parametros" "$STORAGE_ROOT/memorias"
-sudo chown -R $USER:$USER "$STORAGE_ROOT"
-sudo apt update -y && sudo apt install -y python3 python3-pip python3-venv git libsqlite3-dev
-mkdir -p "$PROJECT_DIR/core" && cd "$PROJECT_DIR"
-python3 -m venv venv && source venv/bin/activate
-pip install --upgrade pip && pip install requests beautifulsoup4 colorama flask matplotlib numpy pandas sqlalchemy
-cat << 'CORE' > core/sandbox.py
-import sys, json, logging, traceback, io, contextlib, subprocess, time, re, random
-from typing import Dict, Any, List, Callable, Optional, Union
-from datetime import datetime
-from pathlib import Path
-class Sandbox:
-    def __init__(self, name="BRX_Sandbox", storage="/media/dragonscp/Novo volume/modelo BRX"):
-        self.name = name
-        self.storage = Path(storage)
-        self.tools = {}
-        self.globals_env = {"__builtins__": __builtins__}
-        self.locals_env = {"print": self._print, "datetime": datetime, "json": json, "time": time, "random": random, "re": re, "Path": Path, "STORAGE_PATH": str(self.storage)}
-        self._ensure_storage()
-        self._register_default_tools()
-    def _ensure_storage(self):
-        self.storage.mkdir(parents=True, exist_ok=True)
-        print(f"DEBUG: Armazenamento em {self.storage}")
-    def _print(self, *args):
-        print(f"[{self.name}] {' '.join(map(str, args))}")
-    def register_tool(self, name, func):
-        self.tools[name] = func
-        self.locals_env[name] = func
-    def _register_default_tools(self):
-        def execute_shell(command):
-            try:
-                result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=30)
-                return {"stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
-            except Exception as e: return {"error": str(e)}
-        def read_file(path, subdir="dados"):
-            full_path = self.storage / subdir / path
-            if not full_path.exists(): return f"Erro: Arquivo {path} nao encontrado."
-            return full_path.read_text(encoding='utf-8')
-        def write_file(filename, content, subdir="dados"):
-            full_path = self.storage / subdir / filename
-            full_path.parent.mkdir(parents=True, exist_ok=True)
-            if isinstance(content, (dict, list)): content = json.dumps(content, indent=4, ensure_ascii=False)
-            full_path.write_text(str(content), encoding='utf-8')
-            return f"Sucesso: {filename} salvo em {subdir}."
-        def analyze_text(text):
-            words = text.split()
-            return {"word_count": len(words), "char_count": len(text), "unique_words": len(set(w.lower() for w in words)), "complexity": len(set(words)) / max(1, len(words))}
-        self.register_tool("shell", execute_shell)
-        self.register_tool("ler_arquivo", read_file)
-        self.register_tool("escrever_arquivo", write_file)
-        self.register_tool("analisar_texto", analyze_text)
-    def run(self, code):
-        try:
-            exec(code, self.globals_env, self.locals_env)
-            return True
-        except Exception:
-            print(traceback.format_exc()); return False
-CORE
-cat << 'GEN' > gerador_brx.py
-from core.sandbox import Sandbox
-import time, json
-def main():
-    sb = Sandbox("Gerador_BRX_v5.3")
-    codigo = """
-print('Iniciando Evolucao de Parametros BRX v5.3...')
-topico = 'Sistemas Multi-Agente Inteligentes'
-# Exemplo de geracao com 1 das 8 mentes
-pensamento = f'Analise do Designer: Estrutura logica para {topico} detectada.'
-metricas = analisar_texto(text=pensamento)
-status = escrever_arquivo(filename=f'param_{int(time.time())}.json', content={'topico': topico, 'conteudo': pensamento, 'metricas': metricas}, subdir='parametros')
-print(f'Status: {status}')
-"""
-    sb.run(codigo)
-if __name__ == "__main__": main()
-GEN
-echo "SETUP CONCLUIDO! Para rodar agora, digite:"
-echo "source venv/bin/activate && python3 gerador_brx.py"
-EOF
+# 1. Baixe e execute o script mestre de configuracao
+curl -O https://raw.githubusercontent.com/DragonBRX/Agents-Evolution/main/setup_completo.sh && chmod +x setup_completo.sh && ./setup_completo.sh
+```
 
-chmod +x setup_completo.sh
-./setup_completo.sh
+### Como Executar a Geracao de Parametros
+
+Apos o setup, para iniciar o motor de autonomia:
+```bash
+source venv/bin/activate
+python3 gerador_parametros.py
 ```
 
 ## Estrutura do Repositorio
